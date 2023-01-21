@@ -1,19 +1,8 @@
-import csv
-import pandas as pd
 import matplotlib.pyplot as plt
+from read import read_file
 
 
-# Utils
-def read_file (filename : str) -> pd.DataFrame:
-    with open(filename) as csvfile:
-        csvdata = csv.reader(csvfile)
-        df = pd.DataFrame(csvdata)
-        df.columns = df.iloc[0]
-        df = df[1:]
-        return df
-
-
-# Histogram
+# Scatter plot
 def scatter_plot (filename : str):
     SIZE = 13
     df = read_file(filename)
@@ -40,10 +29,5 @@ def scatter_plot (filename : str):
     plt.tight_layout()
     plt.show()
 
-
-def main ():
-    scatter_plot("../datasets/dataset_train.csv")
-
-
 if __name__ == "__main__":
-    main()
+    scatter_plot("../datasets/dataset_train.csv")

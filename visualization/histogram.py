@@ -1,17 +1,6 @@
-import csv
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-# Utils
-def read_file (filename : str) -> pd.DataFrame:
-    with open(filename) as csvfile:
-        csvdata = csv.reader(csvfile)
-        df = pd.DataFrame(csvdata)
-        df.columns = df.iloc[0]
-        df = df[1:]
-        return df
+from read import read_file
 
 
 # Histogram
@@ -27,10 +16,5 @@ def histogram (filename : str):
 
     plt.show()
 
-
-def main ():
-    histogram("../datasets/dataset_train.csv")
-
-
 if __name__ == "__main__":
-    main()
+    histogram("../datasets/dataset_train.csv")

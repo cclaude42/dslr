@@ -2,6 +2,7 @@ import sys, csv, math
 import pandas as pd
 import numpy as np
 
+
 # Utils
 def is_float(element: any) -> bool:
     if element is None: 
@@ -19,7 +20,6 @@ def read_file (filename : str) -> pd.DataFrame:
         df.columns = df.iloc[0]
         df = df[1:]
         return df
-    return None
 
 
 # Analyze functions
