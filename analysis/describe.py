@@ -3,25 +3,6 @@ import pandas as pd
 import numpy as np
 
 
-# Utils
-def is_float(element: any) -> bool:
-    if element is None: 
-        return False
-    try:
-        float(element)
-        return True
-    except ValueError:
-        return False
-    
-def read_file (filename : str) -> pd.DataFrame:
-    with open(filename) as csvfile:
-        csvdata = csv.reader(csvfile)
-        df = pd.DataFrame(csvdata)
-        df.columns = df.iloc[0]
-        df = df[1:]
-        return df
-
-
 # Analyze functions
 def mean (data : pd.DataFrame):
     tot = 0
@@ -43,7 +24,7 @@ def percentile (data : pd.DataFrame, percentile : float) -> float:
         return data.iloc[math.floor(i)] * (1 - i % 1) + data.iloc[math.ceil(i)] * (i % 1)
 
 def analyze_feature (feature : pd.DataFrame) -> dict:
-    feature = feature.replace('', np.nan).dropna().astype(float).sort_values()
+    feature = feature.dropna().sort_values()
     m = mean(feature)
     return {
         "name": feature.name,
@@ -60,12 +41,12 @@ def analyze_feature (feature : pd.DataFrame) -> dict:
 
 # Display
 def display (data):
-    SIZE = 4
+    SIZE = 5
     # For each block of SIZE
     for i in range(0, len(data), SIZE):
         slce = data[i:i+SIZE]
 
-        # NAME line
+        # Display feature names
         line = f"{0:<6}"
         for desc in slce:
             if len(desc['name']) > 14:
@@ -74,15 +55,17 @@ def display (data):
                 line += f"{desc['name']:>16s}"
         print(line)
 
-        # For each legend...
+        # For each legend
         for legend in ["count", "mean", "std", "min", "25%", "50%", "75%", "max"]:
-            # LEGEND line
+            # Start line with legend
             line = f"{legend:6s}"
+            # Append to line each feature's stat
             for desc in slce:
                 if -1000000 <= desc[legend] <= 1000000:
                     line += f"{desc[legend]:16.6f}"
                 else:
                     line += f"{desc[legend]:16.6e}"
+            # Print line
             print(line)
 
         print()
@@ -90,10 +73,14 @@ def display (data):
 
 # Describe
 def describe (filename : str):
-    df = read_file(filename)
+    # Read data
+    df = pd.read_csv(filename)
 
-    descriptions = [analyze_feature(df[col]) for col in df if is_float(df[col].iloc[0])]
-    display(descriptions)
+    # Get analysis for each numeric column
+    stats = [analyze_feature(df[col]) for col in df if pd.api.types.is_numeric_dtype(df[col])]
+
+    # Format print
+    display(stats)
 
 def main ():
     if len(sys.argv) > 1:

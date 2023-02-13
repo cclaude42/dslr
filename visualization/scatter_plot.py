@@ -1,33 +1,54 @@
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-from read import read_file
+
+
+classes = ['Arithmancy', 'Astronomy', 'Herbology', 'Defense Against the Dark Arts',
+           'Divination', 'Muggle Studies', 'Ancient Runes', 'History of Magic',
+           'Transfiguration', 'Potions', 'Care of Magical Creatures', 'Charms',
+           'Flying']
 
 
 # Scatter plot
 def scatter_plot (filename : str):
-    SIZE = 13
-    df = read_file(filename)
+    # Read data
+    df = pd.read_csv(filename)
 
-    _, axes = plt.subplots(nrows=SIZE, ncols=SIZE)
+    # Create plot grid
+    _, axes = plt.subplots(nrows=len(classes), ncols=len(classes))
 
-    ax = axes.flatten()
-    classes = ['Arithmancy','Astronomy','Herbology','Defense Against the Dark Arts','Divination','Muggle Studies','Ancient Runes','History of Magic','Transfiguration','Potions','Care of Magical Creatures','Charms','Flying']
+    # Turn grid into array
+    axes = axes.flatten()
 
-    for i, classx in enumerate(classes):
-        for j, classy in enumerate(classes):
-            dfc = df[(df[classx] != '') & (df[classy] != '')]
-            x = dfc[classx].astype(float)
-            y = dfc[classy].astype(float)
-            ax = axes.flatten()[i * SIZE + j]
+    # Compare each class to each class
+    for i, class_x in enumerate(classes):
+        for j, class_y in enumerate(classes):
+            # Select the right subplot
+            ax = axes[i * len(classes) + j]
 
-            ax.scatter(x, y)
+            # Draw scatter plot
+            ax.scatter(df[class_x], df[class_y], s=3)
             ax.tick_params(left=False, right=False, labelleft=False, labelbottom=False, bottom=False)
-            if i == 0:
-                ax.title.set_text(classy)
-            if j == 0:
-                ax.set_ylabel(classx, rotation=90, fontsize=6)
 
-    plt.tight_layout()
+            # Set column titles
+            if i == 0:
+                # Alternate placement for readability
+                if j % 2 == 0:
+                    ax.set_title(class_y, fontsize=12)
+                else:
+                    plt.text(0.5, 1.5, class_y, horizontalalignment='center', fontsize=12, transform = ax.transAxes)
+            
+            # Set line titles
+            if j == 0:
+                # Alternate placement for readability
+                if i % 2 == 0:
+                    ax.set_ylabel(class_x, rotation=90, fontsize=10)
+                else:
+                    plt.text(-0.3, 0.5, class_x, rotation=90, verticalalignment='center', fontsize=10, transform = ax.transAxes)
+
+    # Show plot
     plt.show()
 
+
 if __name__ == "__main__":
-    scatter_plot("../datasets/dataset_train.csv")
+    scatter_plot("data/dataset_train.csv")
